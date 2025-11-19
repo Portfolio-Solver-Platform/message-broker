@@ -1,0 +1,50 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: {{ .Values.rabbitmq.clusterName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: message-broker
+    psp.io/service: rabbitmq
+    {{- if .Values.rabbitmq.labels }}
+    {{- toYaml .Values.rabbitmq.labels | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.rabbitmq.replicas }}
+
+  {{- if .Values.rabbitmq.image }}
+  image: {{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}
+  {{- end }}
+
+  resources:
+    {{- toYaml .Values.rabbitmq.resources | nindent 4 }}
+
+  persistence:
+    storageClassName: {{ .Values.rabbitmq.persistence.storageClassName }}
+    storage: {{ .Values.rabbitmq.persistence.storage }}
+
+  rabbitmq:
+    additionalConfig: |
+      {{- .Values.rabbitmq.additionalConfig | nindent 6 }}
+
+    {{- if .Values.rabbitmq.additionalPlugins }}
+    additionalPlugins:
+      {{- toYaml .Values.rabbitmq.additionalPlugins | nindent 6 }}
+    {{- end }}
+
+  service:
+    type: {{ .Values.rabbitmq.service.type }}
+    {{- if .Values.rabbitmq.service.annotations }}
+    annotations:
+      {{- toYaml .Values.rabbitmq.service.annotations | nindent 6 }}
+    {{- end }}
+
+  {{- if .Values.rabbitmq.tls }}
+  tls:
+    {{- toYaml .Values.rabbitmq.tls | nindent 4 }}
+  {{- end }}
+
+  {{- if .Values.rabbitmq.affinity }}
+  affinity:
+    {{- toYaml .Values.rabbitmq.affinity | nindent 4 }}
+  {{- end }}

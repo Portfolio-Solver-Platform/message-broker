@@ -1,0 +1,69 @@
+# RabbitMQ Cluster configuration (DEV environment)
+# Operator is installed separately via kubectl
+rabbitmq:
+  clusterName: rabbitmq
+
+  # Single replica for dev (saves resources)
+  replicas: 1
+
+  # Use official RabbitMQ image
+  image:
+    repository: rabbitmq
+    tag: "3.13.7-management"
+
+  # Lower resources for dev
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+  # Persistent storage configuration
+  persistence:
+    storageClassName: "standard"
+    storage: "5Gi"
+
+  # Additional RabbitMQ configuration
+  additionalConfig: |
+    # DEVELOPMENT ONLY: Allow guest user from any host
+    loopback_users.guest = false
+    default_user = guest
+    default_pass = guest
+    # Cluster formation
+    cluster_formation.peer_discovery_backend = kubernetes
+    cluster_formation.k8s.host = kubernetes.default
+    cluster_formation.node_cleanup.interval = 30
+    cluster_formation.node_cleanup.only_log_warning = true
+    cluster_partition_handling = autoheal
+    # Resource limits
+    disk_free_limit.absolute = 1GB
+    vm_memory_high_watermark.relative = 0.4
+    # Logging
+    log.console.level = info
+    # auth_backends.1 = oauth2
+    # auth_oauth2.resource_server_id = rabbitmq
+    # auth_oauth2.issuer = https://user.psp.svc.cluster.local:8443/api/user/v1/internal
+    # auth_oauth2.https.peer_verification = verify_none
+
+  # Additional plugins to enable
+  additionalPlugins:
+    - rabbitmq_management
+    - rabbitmq_prometheus
+    - rabbitmq_shovel
+    - rabbitmq_shovel_management
+    # - rabbitmq_auth_backend_oauth2
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    annotations: {}
+
+  # Additional labels
+  labels:
+    environment: dev
+
+  # TLS disabled for dev
+  tls:
+    disableNonTLSListeners: false

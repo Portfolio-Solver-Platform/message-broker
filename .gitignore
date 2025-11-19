@@ -1,0 +1,6 @@
+helm/charts/
+helm/Chart.lock
+helm/tmpcharts-*
+
+.DS_STORE
+.env

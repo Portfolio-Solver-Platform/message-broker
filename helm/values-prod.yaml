@@ -1,0 +1,69 @@
+# Production overrides for RabbitMQ cluster
+
+rabbitmq:
+  # Use 3 replicas for HA in production
+  replicas: 3
+
+  # Increased resources for production workload
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+  # Larger persistent storage for production
+  persistence:
+    storageClassName: "standard"  # Override with appropriate production StorageClass (e.g., fast-ssd)
+    storage: "20Gi"
+
+  # Production-specific RabbitMQ configuration
+  # NOTE: Guest user is NOT enabled - secure authentication required
+  # additionalConfig: |
+  #   # Cluster formation
+  #   cluster_formation.peer_discovery_backend = kubernetes
+  #   cluster_formation.k8s.host = kubernetes.default
+  #   cluster_formation.node_cleanup.interval = 30
+  #   cluster_formation.node_cleanup.only_log_warning = true
+  #   # Partition handling for HA
+  #   cluster_partition_handling = pause_minority
+  #   # Resource limits
+  #   disk_free_limit.absolute = 2GB
+  #   vm_memory_high_watermark.relative = 0.4
+  #   # Logging
+  #   log.console.level = info
+  #   # Statistics collection (less frequent for production)
+  #   collect_statistics_interval = 10000
+
+  # Additional labels for production
+  labels:
+    environment: prod
+
+  # Production service configuration
+  service:
+    type: ClusterIP
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "15692"
+
+  # TLS disabled by default (enable when certificates are configured)
+  tls:
+    disableNonTLSListeners: false
+    # To enable TLS, uncomment and configure:
+    # secretName: "rabbitmq-tls-secret"
+    # caSecretName: "rabbitmq-ca-secret"
+
+  # Pod anti-affinity to spread pods across nodes
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - rabbitmq
+            topologyKey: kubernetes.io/hostname

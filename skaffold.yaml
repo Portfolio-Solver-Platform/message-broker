@@ -1,0 +1,29 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: message-broker-skaffold
+
+deploy:
+  helm:
+    releases:
+      - name: message-broker
+        namespace: rabbit-mq
+        createNamespace: true
+        chartPath: helm
+        upgradeOnChange: true
+        wait: true
+        valuesFiles:
+          - helm/values.yaml
+
+profiles:
+- name: dev
+  activation:
+    - command: dev
+
+- name: prod
+  activation:
+    - command: prod
+  patches:
+    - op: add
+      path: /deploy/helm/releases/0/valuesFiles/-
+      value: helm/values-prod.yaml
