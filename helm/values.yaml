@@ -9,7 +9,7 @@ rabbitmq:
   # Use official RabbitMQ image
   image:
     repository: rabbitmq
-    tag: "3.13.7-management"
+    tag: "4.2.4-management@sha256:aeee1db0ff9fdb1347f3585242c14ed10877b56c22eeaa113b21208ef3dd3edf"
 
   # Lower resources for dev
   resources:
