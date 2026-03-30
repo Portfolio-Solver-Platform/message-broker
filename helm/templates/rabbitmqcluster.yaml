@@ -20,7 +20,9 @@ spec:
     {{- toYaml .Values.rabbitmq.resources | nindent 4 }}
 
   persistence:
+    {{- if .Values.rabbitmq.persistence.storageClassName }}
     storageClassName: {{ .Values.rabbitmq.persistence.storageClassName }}
+    {{- end }}
     storage: {{ .Values.rabbitmq.persistence.storage }}
 
   rabbitmq:
