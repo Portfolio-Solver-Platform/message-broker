@@ -1,0 +1,14 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: seed-creds
+  namespace: rabbit-mq
+spec:
+  provider: vault
+  parameters:
+    vaultAddress: "http://secrets-manager-openbao.secrets-manager.svc.cluster.local:8200"
+    roleName: "rabbitmq-bootstrapper"
+    objects: |
+      - objectName: "password"
+        secretPath: "kv/data/rabbitmq/root-user-seed"
+        secretKey: "password"
