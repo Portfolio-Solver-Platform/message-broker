@@ -22,7 +22,7 @@ rabbitmq:
 
   # Persistent storage configuration
   persistence:
-    storageClassName: "standard"
+    storageClassName: ""
     storage: "5Gi"
 
   # Additional RabbitMQ configuration

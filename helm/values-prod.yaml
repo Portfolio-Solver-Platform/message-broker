@@ -15,7 +15,7 @@ rabbitmq:
 
   # Larger persistent storage for production
   persistence:
-    storageClassName: "standard"  # Override with appropriate production StorageClass (e.g., fast-ssd)
+    storageClassName: ""
     storage: "20Gi"
 
   # Production-specific RabbitMQ configuration
