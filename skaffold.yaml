@@ -6,7 +6,7 @@ metadata:
 deploy:
   helm:
     releases:
-      - name: message-broker
+      - name: rabbit-mq
         namespace: rabbit-mq
         createNamespace: true
         chartPath: helm
