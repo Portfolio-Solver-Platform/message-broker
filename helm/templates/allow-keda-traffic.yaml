@@ -1,0 +1,13 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-keda-to-rabbitmq
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/pod-scheduler/sa/keda-operator"]
+    to:
+    - operation:
+        ports: ["15672"]
